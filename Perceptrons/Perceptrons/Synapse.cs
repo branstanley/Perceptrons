@@ -71,7 +71,6 @@ namespace Perceptrons
         public void train_weight(double output, double expected)
         {
             weight = weight + learning_rate * (expected - output) * current_value;
-            Console.WriteLine("New weight calculated: " + weight);
         }
 
     }

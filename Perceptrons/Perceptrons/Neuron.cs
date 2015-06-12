@@ -17,6 +17,12 @@
             output_synapse = new List<Synapse>();
         }
 
+        /*******************************************************************
+         * 
+         * Methods to create a synaptic link.
+         * 
+         *******************************************************************/
+
         /// <summary>
         /// Creates a synaptic link between two neurons, input neuron, the other the output neuron
         /// </summary>
@@ -35,6 +41,26 @@
         {
             input_synapse.Add(to_link);
         }
+
+        /*******************************************************************
+         * 
+         * Neruon input methods.
+         * 
+         *******************************************************************/
+
+        public void UpdateInputValues(double in_value)
+        {
+            foreach (Synapse s in output_synapse)
+            {
+                s.data = in_value;
+            }
+        }
+
+        /*******************************************************************
+         * 
+         * Neuron output methods.
+         * 
+         *******************************************************************/
 
         /// <summary>
         /// Used by the output neuron to calculate the values of all input neurons.
