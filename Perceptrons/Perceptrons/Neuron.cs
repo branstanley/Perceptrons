@@ -33,7 +33,7 @@
         /// Creates training_set synaptic link between two neurons, input neuron, the other the output neuron
         /// </summary>
         /// <param name="to_link">The output Neuron we're creating training_set synaptic link to</param>
-        /// <param name="input">The input neuron we're creating training_set synaptic link to</param>
+        /// <param name="input">The initial input for our synaptic link</param>
         public void Add_Output(Neuron to_link, Boolean input)
         {
             output_synapse.Add(new Synapse(this, to_link, input));
@@ -89,7 +89,6 @@
         /// <summary>
         /// Used for training the synaptic links.
         /// </summary>
-        /// <param name="res">The result recieved</param>
         /// <param name="expected">The expected result</param>
         public void train(Boolean expected)
         {

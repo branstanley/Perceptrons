@@ -28,22 +28,13 @@ namespace Perceptrons
             }
         }
 
-        /// <summary>
-        /// Currently not used, may be used later
-        /// </summary>
-        public Boolean is_ready
-        {
-            get;
-            set;
-        }
-
         // Member Methods
         /// <summary>
         /// The constructor for training_set synapse.
         /// </summary>
         /// <param name="input">The input side neuron</param>
         /// <param name="output">The output side neuron</param>
-        /// <param name="Value">The starting calue at creation.</param>
+        /// <param name="Value">The starting value at creation.</param>
         public Synapse(Neuron input, Neuron output, Boolean Value)
         {
             input_neuron = input;
@@ -52,7 +43,6 @@ namespace Perceptrons
 
             this.weight = 0.5;
             current_value = Value;
-            is_ready = true;
         }
 
         /// <summary>
