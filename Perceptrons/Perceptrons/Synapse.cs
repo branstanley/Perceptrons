@@ -13,26 +13,18 @@ namespace Perceptrons
 
         // Member Variables
         private double weight;
-        private double current_value;
         private Neuron input_neuron;
         private Neuron output_neuron;
 
+
         // Member properties
-        /// <summary>
-        /// Property used to set the current value, and get the value * weight
-        /// </summary>
+        public Boolean current_value;
+
         public double data
         {
             get
             {
-                is_ready = false;
-                return weight * current_value;
-            }
-            set
-            {
-                is_ready = true;
-                this.current_value = value;
-
+                return weight * Convert.ToInt32(current_value);
             }
         }
 
@@ -47,12 +39,12 @@ namespace Perceptrons
 
         // Member Methods
         /// <summary>
-        /// The constructor for a synapse.
+        /// The constructor for training_set synapse.
         /// </summary>
         /// <param name="input">The input side neuron</param>
         /// <param name="output">The output side neuron</param>
         /// <param name="Value">The starting calue at creation.</param>
-        public Synapse(Neuron input, Neuron output, int Value)
+        public Synapse(Neuron input, Neuron output, Boolean Value)
         {
             input_neuron = input;
             output_neuron = output;
@@ -68,9 +60,10 @@ namespace Perceptrons
         /// </summary>
         /// <param name="output">The output we obtained from the output neuron</param>
         /// <param name="expected">The value we expected from the output neuron</param>
-        public void train_weight(double output, double expected)
+        public void train_weight(Boolean result, Boolean expected)
         {
-            weight = weight + learning_rate * (expected - output) * current_value;
+
+            weight = weight + learning_rate * (Convert.ToInt32(expected) - Convert.ToInt32(result)) * Convert.ToInt32(current_value);
         }
 
     }

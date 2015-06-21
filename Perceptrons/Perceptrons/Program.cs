@@ -10,87 +10,197 @@
     {
         static void Main(string[] args)
         {
-            Neuron[] neurons = new Neuron[3];
-            for (int j = 0; j < 3; ++j)
-                neurons[j] = new Neuron();
+            KeyValuePair<Neuron, List<Neuron>> perceptron = run_training(build_training_set());
 
-            Neuron output_neuron = new Neuron(2.3);
+            Console.WriteLine("Training Complete");
 
-            neurons[0].Add_Output(output_neuron, 1);
-            neurons[1].Add_Output(output_neuron, 0);
-            neurons[2].Add_Output(output_neuron, 1);
+            run(perceptron);
 
-            int i = 0, k = 0;
-            Boolean res1 = false, res2 = false, res3 = false;
-            Boolean a, b, c;
+            Console.ReadKey();
+        }
+
+
+        /*******************************************************************
+         * 
+         * Perceptron Training Methods
+         * 
+         *******************************************************************/
+
+        /// <summary>
+        /// Prompts the user to build the training set
+        /// </summary>
+        /// <returns>The training set</returns>
+        public static List<KeyValuePair<Boolean, Boolean[]>> build_training_set()
+        {
+            List<KeyValuePair<Boolean, Boolean[]>> training_set = new List<KeyValuePair<bool, bool[]>>();
+
+            Console.WriteLine("How many neurons are in the input?");
+            int size = 0;
+
+            size = get_int();
 
             do
             {
-                res1 = res2 = res3 = false;
-                neurons[0].UpdateInputValues(1);
-                neurons[1].UpdateInputValues(0);
-                neurons[2].UpdateInputValues(1);
+                Boolean[] inputs = new Boolean[size];
+                Boolean output;
 
-                while (!(res1))
+                Console.WriteLine("All inputs should either be 0, 1, true, or false");
+
+                for (int i = 0; i < size; ++i)
                 {
-                    res1 = output_neuron.Calculate();
-                    if (res1 != true)
-                    {
-                        output_neuron.train(0, 1);
-                    }
-                    k++;
+                    Console.WriteLine("Input for " + i + ": ");
+                    inputs[i] = get_boolean();
                 }
 
-                neurons[0].UpdateInputValues(1);
-                neurons[1].UpdateInputValues(1);
-                neurons[2].UpdateInputValues(0);
+                Console.WriteLine("Expected output: ");
+                output = get_boolean();
 
-                while ((res2))
+                training_set.Add(new KeyValuePair<bool, bool[]>(output, inputs));
+
+                Console.WriteLine("Add another training set?\ny/n");
+            } while (yes_no());
+
+            return training_set;
+        } // End build_training_set
+
+        /// <summary>
+        /// Runs a given training set.
+        /// </summary>
+        /// <param name="set">The training set to base the training off of</param>
+        /// <returns>The trained perceptron</returns>
+        public static KeyValuePair<Neuron, List<Neuron>> run_training(List<KeyValuePair<Boolean, Boolean[]>> set)
+        {
+            // Initialize the Neurons
+            Console.WriteLine("What is the output neuron's activation threshold?");
+            Double thresh = Double.Parse(Console.ReadLine());
+            KeyValuePair<Neuron, List<Neuron>> perceptron = new KeyValuePair<Neuron, List<Neuron>>(new Neuron(thresh), new List<Neuron>());
+
+            // Create all input neurons
+            for (int i = 0; i < set[0].Value.Length; ++i)
+            {
+                Neuron new_input = new Neuron();
+                new_input.Add_Output(perceptron.Key, true); // true for now, set later, whatever don't care to fix old design currently
+                perceptron.Value.Add(new_input);
+            }
+
+            Boolean correctness_flag = true;
+            do
+            {
+                // Perform training
+                foreach (KeyValuePair<Boolean, Boolean[]> item in set)
                 {
-                    res2 = output_neuron.Calculate();
-                    if (res2 == true)
-                    {
-                        output_neuron.train(1, 0);
-                    }
-                    k++;
+                    // Set all the training input values
+                    for (int j = 0; j < item.Value.Length; j++)
+                        perceptron.Value[j].UpdateInputValues(item.Value[j]);
+
+                    // Train, passing the expected output value
+                    perceptron.Key.train(item.Key);
                 }
 
-                neurons[0].UpdateInputValues(0);
-                neurons[1].UpdateInputValues(1);
-                neurons[2].UpdateInputValues(1);
-
-                while (!(res3))
+                //Check if all training sets still produce a correct output
+                foreach (KeyValuePair<Boolean, Boolean[]> item in set)
                 {
-                    res3 = output_neuron.Calculate();
-                    if (res3 != true)
+                    // Set all the training input values
+                    for (int j = 0; j < item.Value.Length; j++)
+                        perceptron.Value[j].UpdateInputValues(item.Value[j]);
+
+                    // Check if Calculated is the same as expected
+                    if (perceptron.Key.Calculate() != item.Key)
                     {
-                        output_neuron.train(0, 1);
+                        correctness_flag = false; // We need to do another pass through
                     }
-                    k++;
                 }
 
-                neurons[0].UpdateInputValues(1);
-                neurons[1].UpdateInputValues(0);
-                neurons[2].UpdateInputValues(1);
-                res1 = output_neuron.Calculate();
-                neurons[0].UpdateInputValues(1);
-                neurons[1].UpdateInputValues(1);
-                neurons[2].UpdateInputValues(0);
-                res2 = output_neuron.Calculate();
-                neurons[0].UpdateInputValues(0);
-                neurons[1].UpdateInputValues(1);
-                neurons[2].UpdateInputValues(1);
-                res3 = output_neuron.Calculate();
-                ++i;
+            } while (!correctness_flag);
 
-            } while (!res1 || res2 || !res3);
+            return perceptron;  // Return our trained perceptron
+        } // End run_training
 
-            Console.WriteLine("It took " + i + " outer loops, "+ k + " inner loops to complete the training");
-            Console.WriteLine("\nResults:\n\t1) " + res1 + "\n\t2) " + res2 + "\n\t3) " + res3);
+        /*******************************************************************
+         * 
+         * Running the Perceptron
+         * 
+         *******************************************************************/
 
+        /// <summary>
+        /// Allows the user to input values and see what the output is based on the given perceptron
+        /// </summary>
+        /// <param name="perceptron">The perceptron for the user to check inputs and their respective outputs</param>
+        public static void run(KeyValuePair<Neuron, List<Neuron>> perceptron)
+        {
+            do
+            {
+                foreach(Neuron temp in perceptron.Value){
+                    Console.WriteLine("Give an Input of 0, 1, true, or false: ");
+                    temp.UpdateInputValues(get_boolean());
+                }
+                Console.WriteLine("Output value of: " + perceptron.Key.Calculate());
+                Console.WriteLine("Continue?  y/n");
+            } while (yes_no());
+        }
 
+        /*******************************************************************
+         * 
+         * Input Data Validation Methods
+         * 
+         *******************************************************************/
 
-            Console.ReadKey();
+        private static Boolean get_boolean()
+        {
+            while (true)
+            {
+                try
+                {
+                    String raw = Console.ReadLine();
+                    if (raw == "1" || raw == "0")
+                        return Convert.ToBoolean(Convert.ToInt16(raw));
+                    else if (raw == "true" || raw == "false")
+                        return Boolean.Parse(raw);
+                    else
+                        Console.WriteLine("Invalid input");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Invalid input: " + e.Message);
+                }
+            }
+        }
+
+        private static Boolean yes_no()
+        {
+            while (true)
+            {
+                try
+                {
+                    String raw = Console.ReadLine();
+                    if (raw.ToLower() == "y" || raw.ToLower() == "yes")
+                        return true;
+                    else if (raw.ToLower() == "n" || raw.ToLower() == "no")
+                        return false;
+                    else
+                        Console.WriteLine("Invalid input");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Invalid input: " + e.Message);
+                }
+            }
+        }
+
+        private static int get_int()
+        {
+            while (true)
+            {
+                try
+                {
+                    int value = Convert.ToInt32(Console.ReadLine());
+                    return value;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Invalid input: " + e.Message);
+                }
+            }
         }
     }
 }

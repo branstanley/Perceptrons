@@ -25,16 +25,16 @@
 
         /*******************************************************************
          * 
-         * Methods to create a synaptic link.
+         * Methods to create training_set synaptic link.
          * 
          *******************************************************************/
 
         /// <summary>
-        /// Creates a synaptic link between two neurons, input neuron, the other the output neuron
+        /// Creates training_set synaptic link between two neurons, input neuron, the other the output neuron
         /// </summary>
-        /// <param name="to_link">The output Neuron we're creating a synaptic link to</param>
-        /// <param name="input">The input neuron we're creating a synaptic link to</param>
-        public void Add_Output(Neuron to_link, int input)
+        /// <param name="to_link">The output Neuron we're creating training_set synaptic link to</param>
+        /// <param name="input">The input neuron we're creating training_set synaptic link to</param>
+        public void Add_Output(Neuron to_link, Boolean input)
         {
             output_synapse.Add(new Synapse(this, to_link, input));
         }
@@ -42,7 +42,7 @@
         /// <summary>
         /// The other end of the synaptic link created by Add Output.
         /// </summary>
-        /// <param name="to_link">The input neuron we're creating a synaptic link with</param>
+        /// <param name="to_link">The input neuron we're creating training_set synaptic link with</param>
         public void Add_Input(Synapse to_link)
         {
             input_synapse.Add(to_link);
@@ -54,11 +54,11 @@
          * 
          *******************************************************************/
 
-        public void UpdateInputValues(double in_value)
+        public void UpdateInputValues(Boolean in_value)
         {
             foreach (Synapse s in output_synapse)
             {
-                s.data = in_value;
+                s.current_value = in_value;
             }
         }
 
@@ -91,11 +91,15 @@
         /// </summary>
         /// <param name="res">The result recieved</param>
         /// <param name="expected">The expected result</param>
-        public void train(double res, double expected)
+        public void train(Boolean expected)
         {
-            foreach (Synapse s in input_synapse)
+            Boolean calc;
+            while ((calc = Calculate()) != expected)
             {
-                s.train_weight(res, expected);
+                foreach (Synapse s in input_synapse)
+                {
+                    s.train_weight(calc, expected);
+                }
             }
         }
     }
