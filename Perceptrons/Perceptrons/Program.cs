@@ -14,83 +14,81 @@
             for (int j = 0; j < 3; ++j)
                 neurons[j] = new Neuron();
 
-            Neuron output_neuron = new Neuron();
+            Neuron output_neuron = new Neuron(2.3);
 
-            neurons[0].Add_Output(output_neuron, 5);
-            neurons[1].Add_Output(output_neuron, 18);
-            neurons[2].Add_Output(output_neuron, 3);
+            neurons[0].Add_Output(output_neuron, 1);
+            neurons[1].Add_Output(output_neuron, 0);
+            neurons[2].Add_Output(output_neuron, 1);
 
             int i = 0, k = 0;
-            double res1 = 0, res2 = 0, res3 = 0;
+            Boolean res1 = false, res2 = false, res3 = false;
             Boolean a, b, c;
 
             do
             {
-                res1 = res2 = res3 = 0;
-                while (!(res1 > 3.9999999999 && res1 < 4.000000001))
+                res1 = res2 = res3 = false;
+                neurons[0].UpdateInputValues(1);
+                neurons[1].UpdateInputValues(0);
+                neurons[2].UpdateInputValues(1);
+
+                while (!(res1))
                 {
-                    neurons[0].UpdateInputValues(5);
-                    neurons[1].UpdateInputValues(18);
-                    neurons[2].UpdateInputValues(3);
                     res1 = output_neuron.Calculate();
-                    if (res1 != 4)
+                    if (res1 != true)
                     {
-                        output_neuron.train(res1, 4);
+                        output_neuron.train(0, 1);
                     }
                     k++;
                 }
 
-                while (!(res2 > 9.9999999999 && res1 < 10.000000001))
+                neurons[0].UpdateInputValues(1);
+                neurons[1].UpdateInputValues(1);
+                neurons[2].UpdateInputValues(0);
+
+                while ((res2))
                 {
-                    neurons[0].UpdateInputValues(10.2);
-                    neurons[1].UpdateInputValues(-20);
-                    neurons[2].UpdateInputValues(3.192);
                     res2 = output_neuron.Calculate();
-                    if (res2 != 10)
+                    if (res2 == true)
                     {
-                        output_neuron.train(res2, 10);
+                        output_neuron.train(1, 0);
                     }
                     k++;
                 }
 
-                while (!(res3 > 91.9999999999 && res3 < 92.000000001))
+                neurons[0].UpdateInputValues(0);
+                neurons[1].UpdateInputValues(1);
+                neurons[2].UpdateInputValues(1);
+
+                while (!(res3))
                 {
-                    neurons[0].UpdateInputValues(11);
-                    neurons[1].UpdateInputValues(-72);
-                    neurons[2].UpdateInputValues(7);
                     res3 = output_neuron.Calculate();
-                    if (res3 != 10)
+                    if (res3 != true)
                     {
-                        output_neuron.train(res3, 92);
+                        output_neuron.train(0, 1);
                     }
                     k++;
                 }
 
-                neurons[0].UpdateInputValues(5);
-                neurons[1].UpdateInputValues(18);
-                neurons[2].UpdateInputValues(3);
+                neurons[0].UpdateInputValues(1);
+                neurons[1].UpdateInputValues(0);
+                neurons[2].UpdateInputValues(1);
                 res1 = output_neuron.Calculate();
-                neurons[0].UpdateInputValues(10.2);
-                neurons[1].UpdateInputValues(-20);
-                neurons[2].UpdateInputValues(3.192);
+                neurons[0].UpdateInputValues(1);
+                neurons[1].UpdateInputValues(1);
+                neurons[2].UpdateInputValues(0);
                 res2 = output_neuron.Calculate();
-                neurons[0].UpdateInputValues(11);
-                neurons[1].UpdateInputValues(-72);
-                neurons[2].UpdateInputValues(7);
+                neurons[0].UpdateInputValues(0);
+                neurons[1].UpdateInputValues(1);
+                neurons[2].UpdateInputValues(1);
                 res3 = output_neuron.Calculate();
                 ++i;
-                a = (!(res1 > 3.9999999999 && res1 < 4.000000001));
-                b = (!(res2 > 9.9999999999 && res2 < 10.000000001));
-                c = (!(res3 > 91.9999999999 && res3 < 92.000000001));
-            } while ( a || b || c);
 
-            Console.WriteLine("It took " + i + " outer loops, "+ k + " inner loops to complete the training with an output of " + res1);
+            } while (!res1 || res2 || !res3);
 
-            neurons[0].UpdateInputValues(192);
-            neurons[1].UpdateInputValues(10);
-            neurons[2].UpdateInputValues(-554);
+            Console.WriteLine("It took " + i + " outer loops, "+ k + " inner loops to complete the training");
+            Console.WriteLine("\nResults:\n\t1) " + res1 + "\n\t2) " + res2 + "\n\t3) " + res3);
 
-            Console.WriteLine("New calculated value with these weights is: " + output_neuron.Calculate());
+
 
             Console.ReadKey();
         }

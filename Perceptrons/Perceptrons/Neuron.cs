@@ -10,11 +10,17 @@
     {
         private List<Synapse> input_synapse;
         private List<Synapse> output_synapse;
+        private double? threshold = null;
 
         public Neuron()
         {
             input_synapse = new List<Synapse>();
             output_synapse = new List<Synapse>();
+        }
+
+        public Neuron(double threshold): this()
+        {
+            this.threshold = threshold;
         }
 
         /*******************************************************************
@@ -66,14 +72,18 @@
         /// Used by the output neuron to calculate the values of all input neurons.
         /// </summary>
         /// <returns>The value calculated by all the synaptic inputs</returns>
-        public double Calculate()
+        public Boolean Calculate()
         {
             double sum = 0;
             foreach (Synapse s in input_synapse)
             {
                 sum += s.data;
             }
-            return sum;
+
+            if (sum >= threshold)
+                return true;
+            else 
+                return false;
         }
 
         /// <summary>
