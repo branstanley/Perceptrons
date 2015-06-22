@@ -9,6 +9,17 @@
 
     class Perceptron
     {
+        private KeyValuePair<Neuron, List<Neuron>> perceptron = new KeyValuePair<Neuron, List<Neuron>>();
+
+        public Perceptron()
+        {
+            user_built_perceptron();
+        }
+
+        public Perceptron(String XmlPath)
+        {
+            xml_built_perceptron(XmlPath);
+        }
 
         /*******************************************************************
          * 
@@ -20,7 +31,7 @@
         /// Suser built build the training set method
         /// </summary>
         /// <returns>The trained perceptront</returns>
-        public static KeyValuePair<Neuron, List<Neuron>> user_built_perceptron()
+        public void user_built_perceptron()
         {
             // Initialize training set
             List<KeyValuePair<Boolean, Boolean[]>> training_set = new List<KeyValuePair<bool, bool[]>>();
@@ -54,7 +65,7 @@
             Console.WriteLine("What is the output neuron's activation threshold?");
             Double thresh = Double.Parse(Console.ReadLine());
 
-            return run_training(training_set, thresh);
+            perceptron = run_training(training_set, thresh);
         } // End user_built_perceptron
 
         /// <summary>
@@ -62,7 +73,7 @@
         /// </summary>
         /// <param name="file">The XML File to parse</param>
         /// <returns>The trained perceptron</returns>
-        public static KeyValuePair<Neuron, List<Neuron>> xml_built_perceptron(String file)
+        public void xml_built_perceptron(String file)
         {
             // Initialize training set
             List<KeyValuePair<Boolean, Boolean[]>> training_set = new List<KeyValuePair<bool, bool[]>>();
@@ -91,7 +102,7 @@
                 training_set.Add(new KeyValuePair<bool, bool[]>(output, inputs));
             }
 
-            return run_training(training_set, Convert.ToDouble(xmlDoc.GetElementsByTagName("threshold")[0].InnerXml));
+            perceptron = run_training(training_set, Convert.ToDouble(xmlDoc.GetElementsByTagName("threshold")[0].InnerXml));
         } // End xml_built_perceptron
 
         /// <summary>
@@ -155,7 +166,7 @@
         /// Allows the user to input values and see what the output is based on the given perceptron
         /// </summary>
         /// <param name="perceptron">The perceptron for the user to check inputs and their respective outputs</param>
-        public static void run(KeyValuePair<Neuron, List<Neuron>> perceptron)
+        public void run()
         {
             do
             {

@@ -10,7 +10,7 @@
     {
         static void Main(string[] args)
         {
-            KeyValuePair<Neuron, List<Neuron>> perceptron = new KeyValuePair<Neuron, List<Neuron>>();
+            Perceptron perceptron = null;
 
             Console.WriteLine("Choose an option:");
             Console.WriteLine("\t1: User Input Training Set");
@@ -19,16 +19,16 @@
             switch (choice)
             {
                 case 1:
-                    perceptron = Perceptron.user_built_perceptron();
+                    perceptron = new Perceptron();
                     break;
                 case 2:
-                    perceptron = Perceptron.xml_built_perceptron("SupportFiles/training_set1.xml");
+                    perceptron = new Perceptron("SupportFiles/training_set1.xml");
                     break;
             }
 
             Console.WriteLine("Training Complete");
 
-            Perceptron.run(perceptron);
+            perceptron.run();
 
             Console.WriteLine("About to exit program.  Press Any Key to Continue.");
             Console.ReadKey();
